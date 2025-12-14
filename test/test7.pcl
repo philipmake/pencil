@@ -1,0 +1,22 @@
+// Test 7: Array declarations and various literals
+
+fn main() -> int {
+    // Different number literals
+    var decimal: int = 42;
+    var binary: int = 0b1010;
+    var hex: int = 0xFF;
+    var octal: int = 0o77;
+    var floatNum: float = 3.14;
+    
+    // Boolean and character literals
+    let flag: bool = true;
+    let ch: char = 'A';
+    
+    // String literal
+    var message: str = "Hello World";
+    
+    // Array declaration
+    let numbers[int:5] = [1, 2, 3, 4, 5];
+    
+    return decimal + binary;
+}

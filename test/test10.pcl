@@ -1,0 +1,24 @@
+// Test 10: Complex expressions with operator precedence
+
+fn main() -> int {
+    var a: int = 2;
+    var b: int = 3;
+    var c: int = 4;
+    
+    // Test precedence: multiplicative before additive
+    var result1: int = a + b * c;
+    
+    // Test precedence: parentheses override
+    var result2: int = (a + b) * c;
+    
+    // Test precedence: unary operators
+    var result3: int = -a + b;
+    
+    // Test precedence: logical operators
+    var test: bool = a < b && b < c || c == 4;
+    
+    // Complex nested expression
+    var final: int = (a + b * c - (c / 2)) * 2 + 1;
+    
+    return final;
+}

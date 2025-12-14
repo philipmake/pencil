@@ -1,0 +1,11 @@
+// Test 1: Basic variable declarations and arithmetic operations
+
+fn main() -> int {
+    var x: int = 10
+    var y: int = 20
+    let z: int = x + y
+    
+    var result: int = z * 2 - x / 5
+    
+    return result
+}

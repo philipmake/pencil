@@ -1,0 +1,19 @@
+// Test 5: Struct and enum definitions
+
+struct Point {
+    x: int,
+    y: int
+}
+
+enum Color {
+    Red,
+    Green,
+    Blue
+}
+
+fn main() -> int {
+    var p: Point;
+    var c: Color = Red;
+    
+    return 0;
+}
