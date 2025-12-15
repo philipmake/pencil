@@ -16,6 +16,9 @@ ASTNode* parse_block(Parser* parser)
     
     while (!parser_check(parser, CLOSE_CURLY))
     {
+        while (parser_match(parser, NEWLINE)) { ; }
+
+        if (parser_check(parser, CLOSE_CURLY)) break;
         ASTNode* stmt = parse_stmt(parser);
         if (!stmt) 
         {
@@ -41,59 +44,27 @@ ASTNode* parse_if_stmt(Parser* parser)
 {
     if (!parser_consume(parser, IF, "Expected 'if' keyword"))
         return NULL;
-
-    parser_consume(parser, OPEN_BRACKET, "Expected '(' after if statement\n");
-    ASTNode* condition = parse_expr(parser);
-    parser_consume(parser, CLOSE_BRACKET, "Expected ')' after if statement\n");
-
-    if (!parser_match(parser, OPEN_CURLY)) return NULL;
-
-    ASTNode** then_branch = NULL; 
-    size_t then_count = 0;
     
-    while (!parser_check(parser, CLOSE_CURLY))
-    {
-        ASTNode* stmt = parse_stmt(parser);
-        if (!stmt) 
-        {
-            parser_error(parser, "Invalid statement in if-body");
-            break;
-        }
-        then_branch = parser_grow_array(then_branch, &then_count, stmt);
+    ASTNode* condition = parse_expr(parser);
+    ASTNode* then_branch = parse_block(parser);  // Returns a Block node
+    
+    if (!then_branch) {
+        parser_error(parser, "Expected block after if condition");
+        return NULL;
     }
-    parser_consume(parser, CLOSE_CURLY, "Expected a '}' at end of then branch\n");
-
-    // handle else-if 
+    
     ASTNode* else_branch = NULL;
     if (parser_match(parser, ELSE))
     {
         if (parser_check(parser, IF))
         {
-            else_branch = parse_if_stmt(parser);
-        } else
-        {
-            parser_consume(parser, OPEN_CURLY, "Expected an '{' after an else statement\n");
-            size_t else_count = 0;
-            ASTNode** else_body = NULL;
-
-            while (!parser_check(parser, CLOSE_CURLY))
-            {
-                ASTNode* stmt = parse_stmt(parser);
-                if (!stmt) 
-                {
-                    parser_error(parser, "Invalid statement in else-body");
-                    break;
-                }
-             
-                else_body = parser_grow_array(else_body, &else_count, stmt);
-            }
-
-            else_branch = ast_block(else_body, else_count);
-            parser_consume(parser, CLOSE_CURLY, "Expected a '}' at end of then branch\n");
+            else_branch = parse_if_stmt(parser);  // Else-if
+        } else {
+            else_branch = parse_block(parser);  // Else block
         }
     }
-
-    return ast_if(condition, then_branch, then_count, else_branch);
+    
+    return ast_if(condition, then_branch, else_branch);
 }
 
 ASTNode* parse_match_stmt(Parser* parser)
@@ -138,6 +109,7 @@ ASTNode* parse_match_stmt(Parser* parser)
     return ast_new_match_stmt(pattern, match_cases, case_count, def_case);
 }
 
+
 ASTNode* parse_for_loop(Parser* parser)
 {
     parser_match(parser, FOR);
@@ -148,6 +120,7 @@ ASTNode* parse_for_loop(Parser* parser)
 
     return ast_for_loop(expr, block);
 }
+
 
 ASTNode* parse_loop(Parser* parser)
 {
@@ -162,22 +135,31 @@ ASTNode* parse_loop(Parser* parser)
 
 ASTNode* parse_stmt(Parser* parser)
 {
+    // Skip leading newlines
+    while (parser_match(parser, NEWLINE)) { ; }
+    
     if (parser_check(parser, VAR))
     {
         ASTNode* var_stmt = parse_var_decl(parser);
-        if (var_stmt != NULL) return var_stmt;
+        if (var_stmt != NULL) {
+            parser_match(parser, SEMICOLON);  // Optional semicolon
+            return var_stmt;
+        }
     }
 
     if (parser_check(parser, LET))
     {
         ASTNode* let_stmt = parse_const_decl(parser);
-        if (let_stmt != NULL) return let_stmt;
+        if (let_stmt != NULL) {
+            parser_match(parser, SEMICOLON);  // Optional semicolon
+            return let_stmt;
+        }
     }
     
     if (parser_check(parser, IF))
     {
         ASTNode* if_stmt = parse_if_stmt(parser);
-        if (if_stmt != NULL) return if_stmt;
+        if (if_stmt != NULL) return if_stmt; 
     }
 
     if (parser_check(parser, MATCH))
@@ -195,7 +177,10 @@ ASTNode* parse_stmt(Parser* parser)
     if (parser_check(parser, RETURN))
     {
         ASTNode* return_stmt = parse_return_stmt(parser);
-        if (return_stmt != NULL) return return_stmt;
+        if (return_stmt != NULL) {
+            parser_match(parser, SEMICOLON);  // Optional semicolon
+            return return_stmt;
+        }
     }
 
     if (parser_check(parser, FOR))
@@ -207,7 +192,7 @@ ASTNode* parse_stmt(Parser* parser)
     if (parser_check(parser, LOOP))
     {
         ASTNode* loop = parse_loop(parser);
-        if (loop != NULL) return loop;
+        if (loop != NULL) return loop; 
     }
 
     if (parser_check(parser, STRUCT))
@@ -228,15 +213,14 @@ ASTNode* parse_stmt(Parser* parser)
         if (enums != NULL) return enums;
     }
 
-    // Otherwise treat as expression statement
+    // Otherwise treat as expression statement (assignments, function calls, etc.)
     ASTNode* exprStmt = parse_expr(parser);
     if (exprStmt != NULL)
     {
-        parser_consume(parser, NEWLINE, "Expected newline after expression statement");
+        parser_match(parser, SEMICOLON);  // Optional semicolon
         return exprStmt;
     }
 
     return NULL;
 }
-
 

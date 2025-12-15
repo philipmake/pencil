@@ -1,7 +1,13 @@
-1 + 2 + 3
-
+/*
+var area = 0
+var r = 7 
 let name = "Philip"
-
 let PI = 3.142
-
 var increment = 0
+*/
+
+if is_float(PI) {
+    area = PI * (r * r)
+} else {
+    print("PI is a float")
+}

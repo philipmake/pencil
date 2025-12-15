@@ -1,14 +1,13 @@
 #include "ast.h"
 
 ASTNode* ast_if(ASTNode* condition,
-                ASTNode** then_branch, size_t then_count,
+                ASTNode* then_branch,
                 ASTNode* else_branch) // can be NULL
 {
     ASTNode* n = (ASTNode*)parser_alloc(sizeof(ASTNode));
     n->type = AST_IF;
     n->as.ifstmt.condition = condition;
     n->as.ifstmt.then_branch = then_branch;
-    n->as.ifstmt.then_count = then_count;
     n->as.ifstmt.else_branch = else_branch;
 
     n->location = condition->location;

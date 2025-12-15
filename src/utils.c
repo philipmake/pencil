@@ -251,20 +251,41 @@ void print_ast(ASTNode* node, int indent)
             printf("IfStmt");
             print_location(node->location);
             printf("\n");
-            if (node->as.ifstmt.condition) {
-                print_indent(indent + 1);
-                printf("Condition:\n");
-                print_ast(node->as.ifstmt.condition, indent + 2);
-            }
             
             print_indent(indent + 1);
-            printf("Then (%zu statements):\n", node->as.ifstmt.then_count);
-            print_statements(node->as.ifstmt.then_branch, node->as.ifstmt.then_count, indent + 2);
+            printf("Condition:\n");
+            print_ast(node->as.ifstmt.condition, indent + 2);
             
+            // Print then_branch
+            print_indent(indent + 1);
+            if (node->as.ifstmt.then_branch && 
+                node->as.ifstmt.then_branch->type == AST_BLOCK) {
+                Block* block = &node->as.ifstmt.then_branch->as.block;
+                printf("Then (%zu statements):\n", block->count);
+                for (size_t i = 0; i < block->count; i++) {
+                    print_ast(block->statements[i], indent + 2);
+                }
+            } else {
+                printf("Then:\n");
+                print_ast(node->as.ifstmt.then_branch, indent + 2);
+            }
+            
+            // Print else_branch if it exists
             if (node->as.ifstmt.else_branch) {
                 print_indent(indent + 1);
-                printf("Else:\n");
-                print_ast(node->as.ifstmt.else_branch, indent + 2);
+                if (node->as.ifstmt.else_branch->type == AST_IF) {
+                    printf("Else (else-if chain):\n");
+                    print_ast(node->as.ifstmt.else_branch, indent + 2);
+                } else if (node->as.ifstmt.else_branch->type == AST_BLOCK) {
+                    Block* block = &node->as.ifstmt.else_branch->as.block;
+                    printf("Else (%zu statements):\n", block->count);
+                    for (size_t i = 0; i < block->count; i++) {
+                        print_ast(block->statements[i], indent + 2);
+                    }
+                } else {
+                    printf("Else:\n");
+                    print_ast(node->as.ifstmt.else_branch, indent + 2);
+                }
             }
             break;
 

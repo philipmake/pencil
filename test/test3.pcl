@@ -1,21 +1,22 @@
 // Test 3: Loop and for statements
 
 fn main() -> int {
-    var sum: int = 0;
-    var i: int = 0;
+    var sum: int = 0
+    var i: int = 0
     
-    // For loop with range
-    for (1...5) {
-        sum = sum + 1;
-    }
+    /* For loop with range
+    for 1...5 {
+        sum = sum + 1
+    } */
     
-    return sum;
+    return sum
 }
 
-[todo] - not parsing loop stmts
+/* [todo] - not parsing loop stmts
 // Loop with condition
 loop {
-    // sum = sum + i;
-    i = i + 1;
+    // sum = sum + i
+    i = i + 1
 }
+*/
     

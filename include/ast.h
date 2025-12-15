@@ -141,8 +141,7 @@ typedef struct
 typedef struct 
 {
     ASTNode* condition;       // may be NULL for plain else
-    ASTNode** then_branch;    // statements inside this block
-    size_t then_count;
+    ASTNode* then_branch;    // statements inside this block
     ASTNode* else_branch;     // points to another IfStmt (for else-if) or a block (for else)
 } IfStmt;
 
@@ -266,7 +265,7 @@ ASTNode* ast_fn_decl(ASTNode* ident,
 ASTNode* ast_block(ASTNode** statements, size_t count);
 ASTNode* ast_return_stmt(ASTNode* expr);
 ASTNode* ast_if(ASTNode* condition,
-                ASTNode** then_branch, size_t then_count,
+                ASTNode* then_branch,
                 ASTNode* else_branch);
 
 ASTNode* ast_new_match_case(ASTNode* expr, ASTNode* result);
