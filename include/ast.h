@@ -34,6 +34,7 @@ typedef enum
     AST_MATCH,
     AST_MATCH_CASE,
     AST_FOR,
+    AST_FOR_EXPR,
     AST_LOOP,
     AST_RETURN
 } ASTNodeType;
@@ -159,9 +160,15 @@ typedef struct
     ASTNode* stmt;
 } MatchCase;
 
+typedef struct 
+{
+    ASTNode* variable;
+    ASTNode* expr;
+} ForExpr;
+
 typedef struct
 {
-    ASTNode* expr;
+    ASTNode* condition;
     ASTNode* block;
 } ForLoop;
 
@@ -229,6 +236,7 @@ struct ASTNode
         Param param;
         StructField field;
         ForLoop forloop;
+        ForExpr forexpr;
         Loop loop;
         Enum enumType;
         Struct structType;
@@ -270,7 +278,8 @@ ASTNode* ast_if(ASTNode* condition,
 
 ASTNode* ast_new_match_case(ASTNode* expr, ASTNode* result);
 ASTNode* ast_new_match_stmt(ASTNode* pattern, ASTNode** match_cases, size_t case_count, ASTNode* def_case);
-ASTNode* ast_for_loop(ASTNode* expr, ASTNode* block);
+ASTNode* ast_for_loop(ASTNode* condition, ASTNode* block);
+ASTNode* ast_for_expr(ASTNode* variable, ASTNode* expr);
 ASTNode* ast_loop(ASTNode* block);
 
 ASTNode* ast_field(ASTNode* ident, Token* data_type);

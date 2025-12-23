@@ -81,3 +81,13 @@ ASTNode* ast_new_range(ASTNode* start, ASTNode* end, ASTNode* inc_end, ASTNode* 
     return n; 
 }
 
+
+ASTNode* ast_for_expr(ASTNode* variable, ASTNode* expr)
+{
+    ASTNode* n = (ASTNode*)parser_alloc(sizeof(ASTNode));
+    n->type = AST_FOR_EXPR;
+    n->as.forexpr.variable = variable;
+    n->as.forexpr.expr = expr;
+    n->location = variable->location;
+    return n;
+}

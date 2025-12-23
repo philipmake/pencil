@@ -3,20 +3,21 @@
 fn main() -> int {
     var sum: int = 0
     var i: int = 0
-    
-    /* For loop with range
+
     for 1...5 {
         sum = sum + 1
-    } */
+    } 
     
     return sum
 }
 
-/* [todo] - not parsing loop stmts
-// Loop with condition
+for (i : 0...10) {
+    print(i)
+}
+
 loop {
-    // sum = sum + i
+    sum = sum + i
     i = i + 1
 }
-*/
+
     

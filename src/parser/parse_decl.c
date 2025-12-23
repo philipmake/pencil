@@ -26,16 +26,13 @@ ASTNode* parse_var_decl(Parser* parser)
     {
         if (parser_check(parser, TYPE) || parser_check(parser, IDENTIFIER))
             data_type = parser_advance(parser);
-        else
-            parser_error(parser, "Expected type after ':'\n");
     }
 
     // Handle initializer
     if (parser_match(parser, ASSIGN))
         value = parse_expr(parser);
 
-    parser_consume(parser, NEWLINE, "Expected newline \n");
-
+    parser_match(parser, NEWLINE);
     return ast_var_decl(ident, data_type, value);
 }
 
@@ -93,15 +90,13 @@ ASTNode* parse_const_decl(Parser* parser)
     {
         if (parser_check(parser, TYPE) || parser_check(parser, IDENTIFIER))
             data_type = parser_advance(parser);
-        else
-            parser_error(parser, "Expected type afer':'\n");
     }
 
     // Handle initializer
     if (parser_match(parser, ASSIGN))
         value = parse_expr(parser);
 
-    parser_consume(parser, NEWLINE, "Expected newline\n");
+    parser_match(parser, NEWLINE);
     return ast_const_decl(ident, data_type, value);
 }
 

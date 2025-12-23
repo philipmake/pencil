@@ -1,13 +1,15 @@
+for (i : 0...10) {
+    print(i)
+}
+
 /*
 var area = 0
-var r = 7 
-let name = "Philip"
 let PI = 3.142
-var increment = 0
-*/
+
 
 if is_float(PI) {
-    area = PI * (r * r)
+    var area = PI * (r * r)
 } else {
-    print("PI is a float")
+    print("value of PI is INVALID")
 }
+*/

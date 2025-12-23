@@ -322,13 +322,26 @@ void print_ast(ASTNode* node, int indent)
             print_ast(node->as.matchcase.stmt, indent + 2);
             break;
 
+        case AST_FOR_EXPR:
+            // printf("for_condition:");
+            print_location(node->location);
+            printf("\n");
+            print_indent(indent);
+            printf("Variable: ");
+            print_ast(node->as.forexpr.variable, indent);
+            print_indent(indent + 1);
+            printf("Expr: ");
+            print_ast(node->as.forexpr.expr, indent);
+            print_indent(indent + 1);
+            break;
+
         case AST_FOR:
             printf("ForLoop");
             print_location(node->location);
             printf("\n");
             print_indent(indent + 1);
-            printf("Expr:\n");
-            print_ast(node->as.forloop.expr, indent + 2);
+            printf("Condition:\n");
+            print_ast(node->as.forloop.condition, indent + 2);
             print_indent(indent + 1);
             printf("Body:\n");
             print_ast(node->as.forloop.block, indent + 2);

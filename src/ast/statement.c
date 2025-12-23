@@ -56,7 +56,7 @@ ASTNode* ast_loop(ASTNode* block)
 {
     ASTNode* n = (ASTNode*)parser_alloc(sizeof(ASTNode));
     n->type =  AST_LOOP;
-    n->as.forloop.block = block;
+    n->as.loop.block = block;
     n->location = block->location;
     return n;
 }

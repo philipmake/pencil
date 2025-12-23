@@ -9,6 +9,7 @@
 
 ASTNode* parse_block(Parser* parser)
 {
+    printf("In block..\n");
     if (!parser_match(parser, OPEN_CURLY)) return NULL;
 
     ASTNode** stmts = NULL; 
@@ -28,7 +29,7 @@ ASTNode* parse_block(Parser* parser)
         stmts = parser_grow_array(stmts, &stmt_count, stmt);
     }
     parser_consume(parser, CLOSE_CURLY, "Expected a '}' at end of then branch\n");  
-    
+    printf("exiting block..\n");
     return ast_block(stmts, stmt_count);
 }
 
@@ -113,7 +114,7 @@ ASTNode* parse_match_stmt(Parser* parser)
 ASTNode* parse_for_loop(Parser* parser)
 {
     parser_match(parser, FOR);
-    ASTNode* expr = parse_range(parser);
+    ASTNode* expr = parse_for_expr(parser);
     ASTNode* block = NULL;
     if (parser_check(parser, OPEN_CURLY))
         block = parse_block(parser);
@@ -136,24 +137,20 @@ ASTNode* parse_loop(Parser* parser)
 ASTNode* parse_stmt(Parser* parser)
 {
     // Skip leading newlines
-    while (parser_match(parser, NEWLINE)) { ; }
+    // while (parser_match(parser, NEWLINE)) { ; }
     
     if (parser_check(parser, VAR))
     {
         ASTNode* var_stmt = parse_var_decl(parser);
-        if (var_stmt != NULL) {
-            parser_match(parser, SEMICOLON);  // Optional semicolon
+        if (var_stmt != NULL)
             return var_stmt;
-        }
     }
 
     if (parser_check(parser, LET))
     {
         ASTNode* let_stmt = parse_const_decl(parser);
-        if (let_stmt != NULL) {
-            parser_match(parser, SEMICOLON);  // Optional semicolon
+        if (let_stmt != NULL)
             return let_stmt;
-        }
     }
     
     if (parser_check(parser, IF))
@@ -177,10 +174,8 @@ ASTNode* parse_stmt(Parser* parser)
     if (parser_check(parser, RETURN))
     {
         ASTNode* return_stmt = parse_return_stmt(parser);
-        if (return_stmt != NULL) {
-            parser_match(parser, SEMICOLON);  // Optional semicolon
+        if (return_stmt != NULL)
             return return_stmt;
-        }
     }
 
     if (parser_check(parser, FOR))
@@ -216,10 +211,7 @@ ASTNode* parse_stmt(Parser* parser)
     // Otherwise treat as expression statement (assignments, function calls, etc.)
     ASTNode* exprStmt = parse_expr(parser);
     if (exprStmt != NULL)
-    {
-        parser_match(parser, SEMICOLON);  // Optional semicolon
         return exprStmt;
-    }
 
     return NULL;
 }

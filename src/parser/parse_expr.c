@@ -235,3 +235,17 @@ ASTNode* parse_primary_expr(Parser* parser)
     }
 }
 
+
+ASTNode* parse_for_expr(Parser* parser)
+{
+    ASTNode* variable = NULL;
+    ASTNode* expr = NULL;
+    Token* ident = parser_advance(parser);
+    variable = ast_new_identifier(ident);
+
+    parser_consume(parser, SEMICOLON, "Expected : here\n");
+
+    expr = parse_range(parser);
+
+    return ast_for_expr(variable, expr);
+}
