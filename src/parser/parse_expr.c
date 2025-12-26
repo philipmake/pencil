@@ -111,7 +111,7 @@ ASTNode* parse_range(Parser* parser)
         if (parser_match(parser, ELLIPSIS))
             step = parse_add_expr(parser);
 
-        start = ast_new_range(start, end, inc_end, step);
+        start = ast_new_range(start, end, step);
     }
 
     return start;
@@ -236,16 +236,25 @@ ASTNode* parse_primary_expr(Parser* parser)
 }
 
 
-ASTNode* parse_for_expr(Parser* parser)
+ASTNode* parse_loop_expr(Parser* parser)
 {
     ASTNode* variable = NULL;
     ASTNode* expr = NULL;
-    Token* ident = parser_advance(parser);
-    variable = ast_new_identifier(ident);
-
-    parser_consume(parser, SEMICOLON, "Expected : here\n");
-
+    
+    /* check for idenifier and that next token is : else parse expression.
+    if NULL take as a loop with no condtion.
+    format => variable : expression
+    */
+    if (parser_match(parser, IDENTIFIER))
+    {
+        Token* idenifier = parser_advance(parser); 
+        variable = ast_new_identifier(idenifier);
+        parser_match(parser, SEMICOLON);
+    } else 
+        goto expr_start_loop_condtion;
+    
+    expr_start_loop_condtion:
     expr = parse_range(parser);
 
-    return ast_for_expr(variable, expr);
+    return ast_loop_expr(variable, expr);
 }

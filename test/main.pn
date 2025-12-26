@@ -1,8 +1,12 @@
-for (i : 0...10) {
+loop num : num[] {
     print(i)
 }
 
 /*
+0...10...2
+
+1...10...3
+
 var area = 0
 let PI = 3.142
 

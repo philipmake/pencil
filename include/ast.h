@@ -33,9 +33,8 @@ typedef enum
     AST_IF,
     AST_MATCH,
     AST_MATCH_CASE,
-    AST_FOR,
-    AST_FOR_EXPR,
     AST_LOOP,
+    AST_LOOP_EXPR,
     AST_RETURN
 } ASTNodeType;
 
@@ -77,7 +76,6 @@ typedef struct
 {
     ASTNode* start;
     ASTNode* end;
-    ASTNode* inc_end;   // inclusive end e.g [<8] stops at 7
     ASTNode* step;  // this field describe the rate of increase or decrease of the range value
 } Range;
 
@@ -164,16 +162,11 @@ typedef struct
 {
     ASTNode* variable;
     ASTNode* expr;
-} ForExpr;
+} LoopExpr;
 
 typedef struct
 {
     ASTNode* condition;
-    ASTNode* block;
-} ForLoop;
-
-typedef struct
-{
     ASTNode* block;
 } Loop;
 
@@ -235,9 +228,8 @@ struct ASTNode
         FuncDecl func;
         Param param;
         StructField field;
-        ForLoop forloop;
-        ForExpr forexpr;
         Loop loop;
+        LoopExpr loopexpr;
         Enum enumType;
         Struct structType;
         Union unionType;
@@ -258,7 +250,7 @@ ASTNode* ast_new_binary(ASTNode* left, Token* op, ASTNode* right);
 ASTNode* ast_new_assign(Token* name, Token* op, ASTNode* value);
 ASTNode* ast_new_index(ASTNode* base, ASTNode* index);
 ASTNode* ast_new_call(ASTNode* callee, ASTNode** args, int arg_count);
-ASTNode* ast_new_range(ASTNode* start, ASTNode* end, ASTNode* inc_end, ASTNode* step);
+ASTNode* ast_new_range(ASTNode* start, ASTNode* end, ASTNode* step);
 
 ASTNode* ast_var_decl(ASTNode* ident, Token* data_type, ASTNode* value);
 ASTNode* ast_const_decl(ASTNode* ident, Token* data_type, ASTNode* value);
@@ -278,9 +270,8 @@ ASTNode* ast_if(ASTNode* condition,
 
 ASTNode* ast_new_match_case(ASTNode* expr, ASTNode* result);
 ASTNode* ast_new_match_stmt(ASTNode* pattern, ASTNode** match_cases, size_t case_count, ASTNode* def_case);
-ASTNode* ast_for_loop(ASTNode* condition, ASTNode* block);
-ASTNode* ast_for_expr(ASTNode* variable, ASTNode* expr);
-ASTNode* ast_loop(ASTNode* block);
+ASTNode* ast_loop(ASTNode* condition, ASTNode* block);
+ASTNode* ast_loop_expr(ASTNode* variable, ASTNode* expr);
 
 ASTNode* ast_field(ASTNode* ident, Token* data_type);
 ASTNode* ast_enum(ASTNode* enum_name, ASTNode** enum_values, size_t enum_count);

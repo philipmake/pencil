@@ -42,22 +42,13 @@ ASTNode* ast_new_match_stmt(ASTNode* pattern,
     return n;
 }
 
-ASTNode* ast_for_loop(ASTNode* expr, ASTNode* block)
-{
-    ASTNode* n = (ASTNode*)parser_alloc(sizeof(ASTNode));
-    n->type =  AST_FOR;
-    n->as.forloop.expr =  expr;
-    n->as.forloop.block = block;
-    n->location = expr->location;
-    return n;
-}
-
-ASTNode* ast_loop(ASTNode* block)
+ASTNode* ast_loop(ASTNode* condition, ASTNode* block)
 {
     ASTNode* n = (ASTNode*)parser_alloc(sizeof(ASTNode));
     n->type =  AST_LOOP;
+    n->as.loop.condition =  condition;
     n->as.loop.block = block;
-    n->location = block->location;
+    n->location = condition->location;
     return n;
 }
 

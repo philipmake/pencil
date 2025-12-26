@@ -111,27 +111,16 @@ ASTNode* parse_match_stmt(Parser* parser)
 }
 
 
-ASTNode* parse_for_loop(Parser* parser)
-{
-    parser_match(parser, FOR);
-    ASTNode* expr = parse_for_expr(parser);
-    ASTNode* block = NULL;
-    if (parser_check(parser, OPEN_CURLY))
-        block = parse_block(parser);
-
-    return ast_for_loop(expr, block);
-}
-
-
-ASTNode* parse_loop(Parser* parser)
+ASTNode* parse_loop_stmt(Parser* parser)
 {
     parser_match(parser, LOOP);
-
+    ASTNode* expr = parse_loop_expr(parser);
+    
     ASTNode* block = NULL;
     if (parser_check(parser, OPEN_CURLY))
         block = parse_block(parser);
 
-    return ast_loop(block);
+    return ast_loop(expr, block);
 }
 
 ASTNode* parse_stmt(Parser* parser)
@@ -178,15 +167,9 @@ ASTNode* parse_stmt(Parser* parser)
             return return_stmt;
     }
 
-    if (parser_check(parser, FOR))
-    {
-        ASTNode* for_loop = parse_for_loop(parser);
-        if (for_loop != NULL) return for_loop;
-    }
-
     if (parser_check(parser, LOOP))
     {
-        ASTNode* loop = parse_loop(parser);
+        ASTNode* loop = parse_loop_stmt(parser);
         if (loop != NULL) return loop; 
     }
 

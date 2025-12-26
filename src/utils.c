@@ -112,6 +112,9 @@ void print_ast(ASTNode* node, int indent)
             print_indent(indent + 1);
             printf("End:\n");
             print_ast(node->as.rng.end, indent + 2);
+            print_indent(indent + 1);
+            printf("Step:\n");
+            print_ast(node->as.rng.step, indent + 2);
             break;
 
         // =================== DECLARATIONS ===================
@@ -322,35 +325,26 @@ void print_ast(ASTNode* node, int indent)
             print_ast(node->as.matchcase.stmt, indent + 2);
             break;
 
-        case AST_FOR_EXPR:
+        case AST_LOOP_EXPR:
             // printf("for_condition:");
             print_location(node->location);
             printf("\n");
             print_indent(indent);
-            printf("Variable: ");
-            print_ast(node->as.forexpr.variable, indent);
+            printf("Variable: \n");
+            print_ast(node->as.loopexpr.variable, indent + 2);
+            print_indent(indent);
+            printf("Expr: \n");
+            print_ast(node->as.loopexpr.expr, indent + 2);
             print_indent(indent + 1);
-            printf("Expr: ");
-            print_ast(node->as.forexpr.expr, indent);
-            print_indent(indent + 1);
-            break;
-
-        case AST_FOR:
-            printf("ForLoop");
-            print_location(node->location);
-            printf("\n");
-            print_indent(indent + 1);
-            printf("Condition:\n");
-            print_ast(node->as.forloop.condition, indent + 2);
-            print_indent(indent + 1);
-            printf("Body:\n");
-            print_ast(node->as.forloop.block, indent + 2);
             break;
 
         case AST_LOOP:
             printf("Loop");
             print_location(node->location);
             printf("\n");
+            print_indent(indent + 1);
+            printf("Condition:\n");
+            print_ast(node->as.loop.condition, indent + 2);
             print_indent(indent + 1);
             printf("Body:\n");
             print_ast(node->as.loop.block, indent + 2);

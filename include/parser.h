@@ -43,14 +43,13 @@ ASTNode* parse_stmt(Parser* parser);
 ASTNode* parse_expr_stmt(Parser* parser); 
 ASTNode* parse_if_stmt(Parser* parser);
 ASTNode* parse_match_stmt(Parser* parser); 
-ASTNode* parse_for_stmt(Parser* parser); // not implemented
 ASTNode* parse_loop_stmt(Parser* parser); 
 ASTNode* parse_return_stmt(Parser* parser); 
 ASTNode* parse_block(Parser* parser); 
 
 // expressions
 ASTNode* parse_expr(Parser* parser);
-ASTNode* parse_for_expr(Parser* parser);
+ASTNode* parse_loop_expr(Parser* parser);
 ASTNode* parse_assign_expr(Parser* parser);
 ASTNode* parse_logical_or(Parser* parser); // logical_or top level
 ASTNode* parse_logical_and(Parser* parser); // logical_or top level

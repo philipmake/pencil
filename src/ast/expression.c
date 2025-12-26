@@ -71,23 +71,24 @@ ASTNode* ast_new_call(ASTNode* callee, ASTNode** args, int arg_count)
     return n; 
 }
 
-ASTNode* ast_new_range(ASTNode* start, ASTNode* end, ASTNode* inc_end, ASTNode* step) 
+ASTNode* ast_new_range(ASTNode* start, ASTNode* end, ASTNode* step) 
 { 
     ASTNode* n = (ASTNode*)parser_alloc(sizeof(ASTNode)); 
     n->type = AST_RANGE; 
     n->as.rng.start = start; 
     n->as.rng.end = end; 
+    n->as.rng.step = step; 
     n->location = start->location;
     return n; 
 }
 
 
-ASTNode* ast_for_expr(ASTNode* variable, ASTNode* expr)
+ASTNode* ast_loop_expr(ASTNode* variable, ASTNode* expr)
 {
     ASTNode* n = (ASTNode*)parser_alloc(sizeof(ASTNode));
-    n->type = AST_FOR_EXPR;
-    n->as.forexpr.variable = variable;
-    n->as.forexpr.expr = expr;
+    n->type = AST_LOOP_EXPR;
+    n->as.loopexpr.variable = variable;
+    n->as.loopexpr.expr = expr;
     n->location = variable->location;
     return n;
 }
