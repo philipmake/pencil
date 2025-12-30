@@ -89,6 +89,6 @@ ASTNode* ast_loop_expr(ASTNode* variable, ASTNode* expr)
     n->type = AST_LOOP_EXPR;
     n->as.loopexpr.variable = variable;
     n->as.loopexpr.expr = expr;
-    n->location = variable->location;
+    // n->location = variable->location;
     return n;
 }

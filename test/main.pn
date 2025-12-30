@@ -1,19 +1,25 @@
-loop num : num[] {
+loop num : numbers {
+    print(num)
+}
+
+loop i : 0...10...3 {
     print(i)
 }
 
-/*
-0...10...2
-
-1...10...3
-
-var area = 0
-let PI = 3.142
-
-
-if is_float(PI) {
-    var area = PI * (r * r)
-} else {
-    print("value of PI is INVALID")
+loop i < 12 {
+    print("Yes")
 }
-*/
+
+loop a == 0 {
+    print("No")
+}
+
+loop {
+    print("Hello")
+}
+
+
+loop a > 0 && b < 10 {
+    print("Maybe")
+}
+

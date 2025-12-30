@@ -326,7 +326,6 @@ void print_ast(ASTNode* node, int indent)
             break;
 
         case AST_LOOP_EXPR:
-            // printf("for_condition:");
             print_location(node->location);
             printf("\n");
             print_indent(indent);
@@ -335,7 +334,6 @@ void print_ast(ASTNode* node, int indent)
             print_indent(indent);
             printf("Expr: \n");
             print_ast(node->as.loopexpr.expr, indent + 2);
-            print_indent(indent + 1);
             break;
 
         case AST_LOOP:

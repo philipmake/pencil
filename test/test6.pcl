@@ -2,25 +2,25 @@
 // Errors. Fix operators
 
 fn main() -> int {
-    var a: int = 5;
-    var b: int = 3;
-    var result: int = 0;
+    var a: int = 5
+    var b: int = 3
+    var result: int = 0
     
     // Logical operators
-    if (a > 0 && b > 0) {
-        result = 1;
+    if a > 0 && b > 0 {
+        result = 1
     }
     
-    if (a == 5 || b == 10) {
-        result = result + 1;
+    if a == 5 || b == 10 {
+        result = result + 1
     }
     
     // Bitwise operators
-    var bitwiseAnd: int = a & b;
-    var bitwiseOr: int = a | b;
-    var bitwiseXor: int = a ^ b;
-    var shiftLeft: int = a << 1;
-    var shiftRight: int = b >> 1;
+    var bitwiseAnd: int = a & b
+    var bitwiseOr: int = a | b
+    var bitwiseXor: int = a ^ b
+    var shiftLeft: int = a << 1
+    var shiftRight: int = b >> 1
     
-    return result + bitwiseAnd;
+    return result + bitwiseAnd
 }

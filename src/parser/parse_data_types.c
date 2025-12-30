@@ -5,12 +5,14 @@
 
 ASTNode* parse_field(Parser* parser)
 {
-    Token* ident_tk = parser_advance(parser);
-    ASTNode* ident = ast_new_identifier(ident_tk);
+    ASTNode* ident = parse_primary_expr(parser);
 
+    printf("filed\n");
     parser_consume(parser, COLON, "Expected ':' after parameter name.\n");
 
     Token* type = parser_advance(parser);
+
+printf("filed222\n");
     return ast_field(ident, type);
 }
 
@@ -21,8 +23,7 @@ ASTNode* parse_struct(Parser* parser)
     ASTNode** fields = NULL;
     size_t fields_count = 0;
 
-    Token* struct_name = parser_advance(parser);
-    name = ast_new_identifier(struct_name);
+    name = parse_primary_expr(parser);
 
     if (!parser_check(parser, OPEN_CURLY)) return NULL;
     parser_consume(parser, OPEN_CURLY, "Expected '{' after struct name\n");
@@ -31,6 +32,7 @@ ASTNode* parse_struct(Parser* parser)
     {
         do {
             ASTNode* field = parse_field(parser);
+            printf("filed333\n");
             fields = parser_grow_array(fields, &fields_count, field);
         } while (parser_match(parser, COMMA));
     }
@@ -56,14 +58,14 @@ ASTNode* parse_enum(Parser* parser)
     // Parse enum variants
     while (!parser_check(parser, CLOSE_CURLY) && !parser_is_at_end(parser))
     {
-        Token* variant_token = parser_consume(parser, IDENTIFIER, "Expected variant name");
-        if (!variant_token) break;
-        
-        ASTNode* variant = ast_new_identifier(variant_token);
-        
-        // Grow the enum_values array
-        enum_values = realloc(enum_values, sizeof(ASTNode*) * (enum_count + 1));
-        enum_values[enum_count++] = variant;
+        // Token* variant_token = parser_advance(parser);
+
+        // if (!variant_token)
+            // break;
+    
+        parser_advance(parser);
+        ASTNode* variant = parse_primary_expr(parser);
+        enum_values = parser_grow_array(enum_values, &enum_count, variant);
         
         // Optional comma
         if (parser_check(parser, COMMA))
@@ -81,7 +83,6 @@ ASTNode* parse_enum(Parser* parser)
     }
     
     parser_consume(parser, CLOSE_CURLY, "Expected '}' after enum variants\n");
-    parser_consume(parser, SEMICOLON, "Expected ';' at end of enum declaration\n");
     
     return ast_enum(enum_name, enum_values, enum_count);
 }

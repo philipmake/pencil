@@ -5,15 +5,41 @@ struct Point {
     y: int
 }
 
+point.x
+point.y
+
 enum Color {
     Red,
     Green,
     Blue
 }
 
-fn main() -> int {
-    var p: Point;
-    var c: Color = Red;
-    
-    return 0;
+enum DataTypes {
+    Int,
+    Float,
+    Float64,
+    rune,
+    Char,
+    String
 }
+
+fn main() -> int {
+    var p: Point
+    var c: Color = Red
+    
+    return 0
+}
+
+
+impl Point {
+    fn radius(x: int, y: int) {
+
+    }
+
+    fn distance(x: int, y: int) {
+
+    }
+}
+
+Point.raius(x, y)
+Point.grow(x, y)

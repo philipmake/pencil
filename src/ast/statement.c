@@ -1,4 +1,5 @@
 #include "ast.h"
+#include <stdio.h>
 
 ASTNode* ast_if(ASTNode* condition,
                 ASTNode* then_branch,
@@ -44,11 +45,12 @@ ASTNode* ast_new_match_stmt(ASTNode* pattern,
 
 ASTNode* ast_loop(ASTNode* condition, ASTNode* block)
 {
+    printf("creating ast node\n");
     ASTNode* n = (ASTNode*)parser_alloc(sizeof(ASTNode));
     n->type =  AST_LOOP;
     n->as.loop.condition =  condition;
     n->as.loop.block = block;
-    n->location = condition->location;
+    // n->location = condition->location;
     return n;
 }
 

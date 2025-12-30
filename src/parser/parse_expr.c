@@ -236,25 +236,51 @@ ASTNode* parse_primary_expr(Parser* parser)
 }
 
 
+// ASTNode* parse_loop_expr(Parser* parser)
+// {
+//     ASTNode* variable = NULL;
+//     ASTNode* expr = NULL;
+    
+//     /* check for idenifier and that next token is : else parse expression.
+//     if NULL take as a loop with no condtion.
+//     format => variable : expression
+//     */
+//     if (parser_match(parser, IDENTIFIER))
+//     {
+//         Token* identifier = parser_advance(parser); 
+//         variable = ast_new_identifier(identifier);
+//         parser_match(parser, COLON);
+//     } else 
+//         goto expr_start_loop_condtion;
+    
+//     expr_start_loop_condtion:
+//     expr = parse_range(parser);
+
+//     return ast_loop_expr(variable, expr);
+
+    
+// }
+
 ASTNode* parse_loop_expr(Parser* parser)
 {
     ASTNode* variable = NULL;
     ASTNode* expr = NULL;
+
+    parser_advance(parser);
     
-    /* check for idenifier and that next token is : else parse expression.
-    if NULL take as a loop with no condtion.
-    format => variable : expression
-    */
-    if (parser_match(parser, IDENTIFIER))
-    {
-        Token* idenifier = parser_advance(parser); 
-        variable = ast_new_identifier(idenifier);
-        parser_match(parser, SEMICOLON);
-    } else 
-        goto expr_start_loop_condtion;
-    
-    expr_start_loop_condtion:
-    expr = parse_range(parser);
+    if (parser_check(parser, COLON)) {
+        Token* identifier = parser_previous(parser);
+        variable = ast_new_identifier(identifier);
+
+        parser_match(parser, COLON);
+
+        expr = parse_range(parser);
+    } else {
+        parser->current--; // backtrack here
+        expr = parse_expr(parser);
+    }
 
     return ast_loop_expr(variable, expr);
 }
+
+

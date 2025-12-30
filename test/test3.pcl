@@ -4,14 +4,14 @@ fn main() -> int {
     var sum: int = 0
     var i: int = 0
 
-    for 1...5 {
+    loop 1...5 {
         sum = sum + 1
     } 
     
     return sum
 }
 
-for (i : 0...10) {
+loop i : 0...10 {
     print(i)
 }
 
