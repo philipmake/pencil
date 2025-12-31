@@ -1,7 +1,5 @@
 Todos
 1. for loops
-	- implement expressions for for-loops
-	- range expression with inclusive and exclusive end
 	- collection data expression
 	- range expression with variable
 	[replaced-all-for-loop-statements-with-a-single-LOOP-stmt]
