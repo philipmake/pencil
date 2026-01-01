@@ -59,13 +59,12 @@
 <postfix>       -> <primary> ("[" <expr> "]" | "(" <args?> ")")*
 <primary>       -> <literal> | <ident> | "(" <expr> ")"
 
-
 <postfix>       -> <expr> <postfix_op> 
 <prefix>        -> <prefix_op> <expr>
 
 ## Operator Precedence (High → Low)
 1. Parentheses: `()`
-2. Unary operators: `+ - ! ~`
+2. Unary operators: `++ -- ! ~`
 3. Multiplicative: `* / %`
 4. Additive: `+ -`
 5. Comparison: `== != > < >= <=`
@@ -73,18 +72,21 @@
 7. Assignment: `= += -= *= /= %=`
 
 ## Keywords
-var, let
-struct, enum, vec, variant(sth like a union)
+var, let,
+struct, enum, vec, union,
 if, else, match, 
-loop, for, in
+loop,
 import
-str, char
-int, inth(half integer-size), byte, short
-float, double
-fn, main
-match
+u8, u16, u32, u64,
+s8, s16, s32, s64,
+f32, f64,
+fn, main, return
+break, continue
 
-## types = byte, short, int, long, xlong, .... unsigned
+## Reserved words
+String, Int, Float, Float64, Int64,
+Char, Bool, type, use, defer
+
 
 -- string types ::= "str" "[" <int> "]";  This tells the length of the string buffer;
 -- type definition ::= "type" types? or data structure definition like enum, struct, variant, vec!, list
@@ -96,62 +98,86 @@ match
     | <function_declaration>
     | <import_declaration>
     | <struct_declaration>
+    | <union_declaration>
     | <enum_declaration>
     | <vector_declaration>
 
-<var_declaration>      ::= "var" <ident> [ ":" <type> ] [ "=" <expr> ] ";"
-<const_declaration>    ::= "let" <ident> [ ":" <type> ] [ "=" <expr> ] ";"
-<array_declaration>    ::= "let" <ident> "[" <type> ":" <range> "]" [ "=" <array_initializer> ] ";"
-<import_declaration>   ::= "import" <string_literal> ";"
-<array_initializer>   ::= "[" <literal> ("," <literal>)* "]"
-
-<function_declaration> ::= "fn" <ident> "(" [ <param> ("," <param>)* ] ")" [ "->" <return_type> ] "{" <block>* <return_stmt>? "}"
+<var_declaration>      ::= "var" <ident> [ ":" <type> ] [ "=" <expr> ] 
+<const_declaration>    ::= "let" <ident> [ ":" <type> ] [ "=" <expr> ] 
+<array_declaration>    ::= "let" | "var" <ident> "[" <type> ":" <range> "]" [ "=" <array_initializer> ]
+<import_declaration>   ::= "import" <string_literal> 
+<array_initializer>    ::= "[" <literal> ("," <literal>)* "]"
 
 <param> ::= [<ident>":"<type>]*
 
-<struct_declaration> ::= "struct" <ident> "{" <param>* "}" ";"
+<function_declaration> ::= "fn" <ident> 
+                            "(" [ <param> ("," <param>)* ] ")" 
+                            [ "->" <return_type> ] 
+                            "{" 
+                              <stmt>* 
+                              <return_stmt>? 
+                            "}"
 
-<variant_declaration> ::= "variant" "{" <param>* "}" <ident> ";"
+<field> ::= [<ident>":"<type>]*
 
-enum_decl := 'enum' IDENTIFIER '{' enum_variant_list '}' ';'
-enum_variant_list := enum_variant (',' enum_variant)* ','?
-enum_variant := IDENTIFIER
+<struct_declaration> ::=  "struct" <ident> "{" 
+                            <field>* 
+                          "}"
 
-<vector_declaration> ::= "vec!" "[" <type> "]" ";"  // To be defined further
+<union_declaration> ::= "union" "{" 
+                          <field>* 
+                        "}" <ident>
+
+<variant> ::= <ident>
+
+<enum_list> ::= <variant> ("," <variant>)*
+
+<enum_declaration>  ::= "enum" <ident> "{" <enum_list> "}"
 
 <body>        ::= <statement>* EOF
 
 <statement>   ::= 
       <declaration>
-    | <expr> ";"
-    | <func_call> ";"
+    | <expr>
+    | <func_call> 
     | <if_statement>
     | <loop_statement>
-    | <for_statement>
     | <match_statement>
     | <return_statement>
+    | <impl>
 
 <block>       ::= "{" <statements>* "}"
 
-<return_stmt>         ::= "return" [ <expr> ] ";"
-<user_defined_type>   ::= <ident>
-<literal>             ::= <int_literal> | <float_literal> | <bool_literal> | <char_literal> | <string_literal>
+<return_stmt>         ::= "return" [ <expr> ]
 
 <if_statement>        ::= "if" "(" <expr> ")" <block>
-                          <else_if_statement>*
-                          <else_statement>
+                          [ <else_if_statement>* ]
+                          [ <else_statement> ]
 
 <else_if_statement>   ::= "else if" "(" <expr> ")" <block>
+
 <else_statement>      ::= "else" <block>
 
-<loop_statement>      ::= "loop" <expr> <block>
+<loop_expr>           ::= <ident> ":" <expr> | <expr>
 
-<for_statement>       ::= "for" [<range> | <in_expr>] <block>
+<loop_statement>      ::= "loop" [ <loop_expr> ] <block>
 
-<match_statement>     ::= "case" <pattern> "{"
-                              <expr> ":"  <block> ","
-                              [<expr> ":" <block> ","]*
-                              "_" ":" <blcok> ";"
+<match_statement>     ::= "match" <pattern> "{"
+                              <expr> ":"  <block> | <stmt> ","
+                              [<expr> ":" <block> | <stmt> ","]*
+                              "_" ":" <blcok> | <stmt>
                           "}"
-                          
-<return_statement>    ::= "return" <expr> ";"
+
+<args>        ::= <literal> [ ("," <literal>)* ]
+<func_call>   ::= <ident> "(" <args> ")"
+
+## Gnerics
+
+
+## Implement block
+<impl> ::= "impl" <ident> <block>
+
+## Methods on objects
+<method_call> ::= <ident> "." <func_call> [ ("." <func_call>)* ]
+
+## Type casting

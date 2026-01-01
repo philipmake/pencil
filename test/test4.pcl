@@ -5,7 +5,7 @@ fn add(a: int, b: int) -> int {
 }
 
 fn multiply(x: int, y: int) -> int {
-    var result: int = x * y
+    var result = x * y
     return result
 }
 

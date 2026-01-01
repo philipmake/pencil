@@ -1,11 +1,13 @@
 // Test 1: Basic variable declarations and arithmetic operations
 
+let arr[int: 10] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
 fn main() -> int {
-    var x: int = 10
-    var y: int = 20
-    let z: int = x + y
+    var x = arr[2]
+    var y = arr[8]
+    let z = x + y
     
-    var result: int = z * 2 - x / 5
+    var result = z * 2 - x / 5
     
     return result
 }

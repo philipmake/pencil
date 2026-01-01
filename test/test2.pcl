@@ -1,8 +1,8 @@
 // Test 2: If-else statements and comparison operators
 
 fn main() -> int {
-    var age: int = 25
-    var status: int = 0
+    var age = 25
+    var status = 0
     
     if age >= 18 {
         status = 1
