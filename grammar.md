@@ -171,13 +171,12 @@ Char, Bool, type, use, defer
 <args>        ::= <literal> [ ("," <literal>)* ]
 <func_call>   ::= <ident> "(" <args> ")"
 
-## Gnerics
 
+- for later
+## Gnerics
 
 ## Implement block
 <impl> ::= "impl" <ident> <block>
 
 ## Methods on objects
 <method_call> ::= <ident> "." <func_call> [ ("." <func_call>)* ]
-
-## Type casting

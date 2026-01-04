@@ -1,7 +1,7 @@
 #ifndef ANALYSIS_H_
 #define ANALYSIS_H_
 
-char* type_error_list = "";
+#include "ast.h"
 
 void start_analysis(ASTNode* prog);
 
@@ -25,5 +25,8 @@ void loop_analyse(ASTNode* loops);
 // expression
 void expr_analyse(ASTNode* expr);
 void decl_analyse(ASTNode* decl);
+
+
+void analyse_node(ASTNode* node);
 
 #endif

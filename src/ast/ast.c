@@ -13,6 +13,97 @@ char* my_strdup(const char* s)
     return copy;
 }
 
+void astnodetype_to_string(ASTNodeType type)
+{
+    switch (type){
+        case AST_BLOCK:
+            printf("AST_BLOCK\n");
+            break;
+        case AST_PROGRAM:
+            printf("AST_PROGRAM\n");
+            break;
+        case AST_STMT:
+            printf("AST_STMT\n");
+            break;
+        case AST_LITERAL:
+            printf("AST_LITERAL\n");
+            break;
+        case AST_IDENTIFIER:
+            printf("AST_IDENTIFIER\n");
+            break;
+        case AST_UNARY:
+            printf("AST_UNARY\n");
+            break;
+        case AST_BINARY:
+            printf("AST_BINARY\n");
+            break;
+        case AST_ASSIGN:
+            printf("AST_ASSIGN\n");
+            break;
+        case AST_INDEX:
+            printf("AST_INDEX\n");
+            break;
+        case AST_FN_CALL:
+            printf("AST_FN_CALL\n");
+            break;
+        case AST_RANGE:
+            printf("AST_RANGE\n");
+            break;
+        case AST_VAR_DECL:
+            printf("AST_VAR_DECL\n");
+            break;
+        case AST_CONST_DECL:
+            printf("AST_CONST_DECL\n");
+            break;
+        case AST_FN_DECL:
+            printf("AST_FN_DECL\n");
+            break;
+        case AST_ARRAY_DECL:
+            printf("AST_ARRAY_DECL\n");
+            break;
+        case AST_PARAM:
+            printf("AST_PARAM\n");
+            break;
+        case AST_STRUCT:
+            printf("AST_STRUCT\n");
+            break;
+        case AST_ENUM:
+            printf("AST_ENUM\n");
+            break;
+        case AST_VECTOR:
+            printf("AST_VECTOR\n");
+            break;
+        case AST_FIELD:
+            printf("AST_FIELD\n");
+            break;
+        case AST_UNION:
+            printf("AST_UNION\n");
+            break;
+        case AST_IF:
+            printf("AST_IF\n");
+            break;
+        case AST_MATCH:
+            printf("AST_MATCH\n");
+            break;
+        case AST_MATCH_CASE:
+            printf("AST_MATCH_CASE\n");
+            break;
+        case AST_LOOP:
+            printf("AST_LOOP\n");
+            break;
+        case AST_LOOP_EXPR:
+            printf("AST_LOOP_EXPR\n");
+            break;
+        case AST_RETURN:
+            printf("AST_RETURN\n");
+            break;
+        default:
+            printf("Default cae: UNKOWN ASTNODE\n");
+            break;
+    }
+   
+}
+
 // ===== Allocator =====
 void* parser_alloc(size_t size) 
 {

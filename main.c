@@ -6,6 +6,7 @@
 #include "parser.h"
 #include "ast.h"
 #include "utils.h"
+#include "analysis.h"
 
 char* filename;
 
@@ -35,6 +36,7 @@ int main(int argc, char* argv[])
 
     print_all_tokens_global(); 
 
+    // parsing starts here
     Parser* parser = init_parser(global_array->tokens, global_array->token_count);
     
     ASTNode* root = parse_program(parser);
@@ -45,9 +47,10 @@ int main(int argc, char* argv[])
         printf("Parsing failed: %s\n", parser->error_msg);
     }
 
-    // init semantic analysis
+    // semantic analysis
+    start_analysis(root);
 
-    // code generation - rv64
+    // code generation - rv32
 
 
     return 0;

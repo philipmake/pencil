@@ -38,6 +38,8 @@ typedef enum
     AST_RETURN
 } ASTNodeType;
 
+void astnodetype_to_string(ASTNodeType type);
+
 // Expression structures
 typedef struct 
 {
@@ -94,7 +96,6 @@ typedef struct
 // variable and constant declarations
 typedef struct
 {
-    ASTNodeType type;
     Token* data_type; // int, float or char??
     ASTNode* ident;
     ASTNode* value;
