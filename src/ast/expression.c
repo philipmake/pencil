@@ -1,4 +1,5 @@
 #include "ast.h"
+#include <stdio.h>
 
 
 ASTNode* ast_new_literal(Token* t)

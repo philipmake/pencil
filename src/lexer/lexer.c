@@ -650,6 +650,8 @@ void lexer(Lexer *lexer)
         // Operators & delimiters
         operators_and_delimiters(lexer);
     }
+    
+    add_token(TOKEN_EOF, "EOF", 3, lexer->line, lexer->column);
 }
 
 

@@ -14,3 +14,8 @@ Todos
 10. method calling with dot notation e.g [object]'.'[method-in-impl-block]
 11. match statements 
 12. match case statements
+
+- symbol table 
+- print symbol table
+
+- semantic analysis

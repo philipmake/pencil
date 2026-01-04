@@ -16,19 +16,30 @@ ASTNode* parse_expr(Parser* parser)
 // Right-associative (a = b = c -> a = (b = c))
 ASTNode* parse_assign_expr(Parser* parser)
 {
+    // Peek ahead to see if this looks like an assignment
     if (parser_check(parser, IDENTIFIER))
     {
-        Token* name = parser_advance(parser);
-        if (parser_check(parser, ASSIGN))
+        // Look ahead one more token
+        if (parser->current + 1 < parser->count)
         {
-            Token* op = parser_advance(parser);
-            ASTNode* value = parse_assign_expr(parser);    // right assoc i.e a=b=c -> a=(b=c)
-            return ast_new_assign(name, op, value);
+            Token* next = parser->tokens[parser->current + 1];
+            
+            // Check if next token is an assignment operator
+            if (next->type == ASSIGN || next->type == PLUS_ASSIGN || 
+                next->type == MINUS_ASSIGN || next->type == STAR_ASSIGN ||
+                next->type == SLASH_ASSIGN || next->type == PERCENT_ASSIGN || 
+                next->type == AND_ASSIGN)
+            {
+                // This IS an assignment
+                Token* name = parser_advance(parser);  // consume identifier
+                Token* op = parser_advance(parser);     // consume operator
+                ASTNode* value = parse_assign_expr(parser); // right-associative
+                return ast_new_assign(name, op, value);
+            }
         }
-        
-        parser->current--; // Backtrack
     }
-
+    
+    // Not an assignment, parse as lower precedence expression
     return parse_logical_or(parser);
 }
 
