@@ -1,6 +1,8 @@
 #include "ast.h"
 #include "parser.h"
 #include "token.h"
+#include "scope.h"
+#include "symtab.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -9,8 +11,22 @@
 
 ASTNode* parse_block(Parser* parser)
 {
-    printf("In block..\n");
-    if (!parser_match(parser, OPEN_CURLY)) return NULL;
+    printf("DEBUG: Entering parse_block\n");
+    
+    if (!parser_match(parser, OPEN_CURLY)) {
+        printf("DEBUG: No opening brace found\n");
+        return NULL;
+    }
+
+    // Enter new scope
+    if (parser->symtab != NULL) {
+        printf("DEBUG: Entering block scope (current depth: %d)\n", 
+               parser->symtab->current_depth);
+        symtab_enter_scope(parser->symtab);
+        printf("DEBUG: New depth: %d\n", parser->symtab->current_depth);
+    } else {
+        printf("DEBUG: WARNING - parser->symtab is NULL in parse_block\n");
+    }
 
     ASTNode** stmts = NULL; 
     size_t stmt_count = 0;
@@ -20,6 +36,8 @@ ASTNode* parse_block(Parser* parser)
         while (parser_match(parser, NEWLINE)) { ; }
 
         if (parser_check(parser, CLOSE_CURLY)) break;
+        
+        printf("DEBUG: Parsing statement in block\n");
         ASTNode* stmt = parse_stmt(parser);
         if (!stmt) 
         {
@@ -28,11 +46,20 @@ ASTNode* parse_block(Parser* parser)
         }
         stmts = parser_grow_array(stmts, &stmt_count, stmt);
     }
-    parser_consume(parser, CLOSE_CURLY, "Expected a '}' at end of then branch\n");  
-    printf("exiting block..\n");
+    
+    parser_consume(parser, CLOSE_CURLY, "Expected a '}' at end of block\n");  
+    
+    // Exit scope
+    if (parser->symtab != NULL) {
+        printf("DEBUG: Exiting block scope (current depth: %d)\n", 
+               parser->symtab->current_depth);
+        symtab_exit_scope(parser->symtab);
+        printf("DEBUG: New depth: %d\n", parser->symtab->current_depth);
+    }
+    
+    printf("DEBUG: Exiting parse_block\n");
     return ast_block(stmts, stmt_count);
 }
-
 ASTNode* parse_return_stmt(Parser* parser)
 {
     parser_advance(parser); // consume return keyword

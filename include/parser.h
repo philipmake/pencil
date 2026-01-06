@@ -2,6 +2,9 @@
 #define PARSER_H_
 
 #include "ast.h"
+#include "scope.h"
+#include "symtab.h"
+
 #include <stdbool.h>
 #include <stdio.h>
 
@@ -12,6 +15,7 @@ typedef struct
     int current;
     int count;
     const char* error_msg;
+    symtab_t* symtab;
 } Parser;
 
 /* parser functions */

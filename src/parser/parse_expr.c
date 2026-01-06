@@ -1,6 +1,8 @@
 #include "ast.h"
 #include "parser.h"
 #include "token.h"
+#include "scope.h"
+#include "symtab.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -231,6 +233,16 @@ ASTNode* parse_primary_expr(Parser* parser)
             return ast_new_literal(tk);
         case IDENTIFIER:
             tk = parser_advance(parser);
+
+            // Look up the symbol
+            sym_entry_t* sym = symtab_lookup(parser->symtab, tk->lexeme);
+            if (!sym)
+                fprintf(stderr, "Error at line %d: Undefined identifier '%s'\n",
+                        tk->location.line, tk->lexeme);
+            else
+                // Add reference
+                symtab_add_reference(sym, tk->location.line, 0);  // 0 = read
+
             return ast_new_identifier(tk);
         case OPEN_PAREN: 
         {
@@ -246,31 +258,6 @@ ASTNode* parse_primary_expr(Parser* parser)
     }
 }
 
-
-// ASTNode* parse_loop_expr(Parser* parser)
-// {
-//     ASTNode* variable = NULL;
-//     ASTNode* expr = NULL;
-    
-//     /* check for idenifier and that next token is : else parse expression.
-//     if NULL take as a loop with no condtion.
-//     format => variable : expression
-//     */
-//     if (parser_match(parser, IDENTIFIER))
-//     {
-//         Token* identifier = parser_advance(parser); 
-//         variable = ast_new_identifier(identifier);
-//         parser_match(parser, COLON);
-//     } else 
-//         goto expr_start_loop_condtion;
-    
-//     expr_start_loop_condtion:
-//     expr = parse_range(parser);
-
-//     return ast_loop_expr(variable, expr);
-
-    
-// }
 
 ASTNode* parse_loop_expr(Parser* parser)
 {

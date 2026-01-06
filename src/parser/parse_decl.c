@@ -1,6 +1,8 @@
 #include "ast.h"
 #include "parser.h"
 #include "token.h"
+#include "scope.h"
+#include "symtab.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -9,9 +11,16 @@
 
 ASTNode* parse_var_decl(Parser* parser)
 {
+    printf("DEBUG: Entering parse_var_decl\n");
     parser_consume(parser, VAR, "Expected 'var' keyword");
 
     Token* ident_tk = parser_consume(parser, IDENTIFIER, "Expected identifier after 'var'");
+    if (!ident_tk) {
+        printf("DEBUG: Failed to get identifier token\n");
+        return NULL;
+    }
+    printf("DEBUG: Got identifier: %s\n", ident_tk->lexeme);
+    
     ASTNode* ident = ast_new_identifier(ident_tk);
 
     Token* data_type = NULL;
@@ -31,8 +40,49 @@ ASTNode* parse_var_decl(Parser* parser)
     // Handle initializer
     if (parser_match(parser, ASSIGN))
         value = parse_expr(parser);
-
+    
     parser_match(parser, NEWLINE);
+
+    // SYMBOL TABLE INSERTION - ADD NULL CHECKS
+    if (parser->symtab == NULL) {
+        printf("DEBUG: ERROR - parser->symtab is NULL!\n");
+        return ast_var_decl(ident, data_type, value);
+    }
+    
+    printf("DEBUG: Checking for redeclaration of '%s'\n", ident_tk->lexeme);
+    
+    // Check for redeclaration in current scope
+    if (symtab_lookup_current_scope(parser->symtab, ident_tk->lexeme)) {
+        fprintf(stderr, "Error at line %d: Variable '%s' already declared in this scope\n",
+                ident_tk->location.line, ident_tk->lexeme);
+        // Don't return NULL, just warn and continue
+    } else {
+        printf("DEBUG: Creating symbol for '%s'\n", ident_tk->lexeme);
+        
+        // Create and insert symbol
+        sym_entry_t* sym = sym_create(
+            ident_tk->lexeme,
+            SYM_VARIABLE,
+            TYPE_UNKNOWN,  // We'll improve type inference later
+            ident_tk->location.line
+        );
+        
+        if (!sym) {
+            printf("DEBUG: ERROR - sym_create returned NULL!\n");
+        } else {
+            printf("DEBUG: Symbol created, inserting into table\n");
+            sym->level = parser->symtab->current_depth;
+            sym->scope = parser->symtab->current_scope;
+            
+            if (symtab_insert(parser->symtab, sym) == NULL) {
+                printf("DEBUG: ERROR - symtab_insert failed!\n");
+            } else {
+                printf("DEBUG: Symbol inserted successfully\n");
+            }
+        }
+    }
+
+    printf("DEBUG: Exiting parse_var_decl\n");
     return ast_var_decl(ident, data_type, value);
 }
 
@@ -97,6 +147,20 @@ ASTNode* parse_const_decl(Parser* parser)
         value = parse_expr(parser);
 
     parser_match(parser, NEWLINE);
+
+    // create and insert symbol
+    sym_entry_t* sym = sym_create(
+        ident_tk->lexeme,
+        SYM_VARIABLE,
+        TYPE_UNKNOWN,
+        ident_tk->location.line
+    );
+    // set level and scope
+    sym->level = parser->symtab->current_depth;
+    sym->scope = parser->symtab->current_scope;
+
+    symtab_insert(parser->symtab, sym);
+    
     return ast_const_decl(ident, data_type, value);
 }
 
@@ -113,6 +177,8 @@ ASTNode* parse_param(Parser* parser)
 
 ASTNode* parse_func_decl(Parser* parser) 
 {
+    printf("DEBUG: Entering parse_func_decl\n");
+    
     ASTNode* identifier = NULL;
     ASTNode** params = NULL;
     size_t params_count = 0;
@@ -123,15 +189,69 @@ ASTNode* parse_func_decl(Parser* parser)
         return NULL;
     
     Token* ident = parser_advance(parser);
+    if (!ident) {
+        printf("DEBUG: Failed to get function identifier\n");
+        return NULL;
+    }
+    printf("DEBUG: Got function name: %s\n", ident->lexeme);
+    
     identifier = ast_new_identifier(ident);
 
+    // SYMBOL TABLE CHECK
+    if (parser->symtab == NULL) {
+        printf("DEBUG: ERROR - parser->symtab is NULL in parse_func_decl!\n");
+        goto skip_symtab;
+    }
+
+    // Check for redeclaration
+    if (symtab_lookup_current_scope(parser->symtab, ident->lexeme)) {
+        fprintf(stderr, "Error: Function '%s' already declared\n", ident->lexeme);
+        // Continue parsing anyway
+    } else {
+        printf("DEBUG: Creating function symbol for '%s'\n", ident->lexeme);
+        
+        // Create function symbol
+        sym_entry_t* func_sym = sym_create(
+            ident->lexeme,
+            SYM_FUNCTION,
+            TYPE_VOID,
+            ident->location.line
+        );
+        
+        if (!func_sym) {
+            printf("DEBUG: ERROR - Failed to create function symbol\n");
+        } else {
+            func_sym->info.func.param_count = 0;
+            func_sym->info.func.params = NULL;
+            func_sym->info.func.is_defined = 0;
+            
+            if (symtab_insert(parser->symtab, func_sym) == NULL) {
+                printf("DEBUG: ERROR - Failed to insert function symbol\n");
+            } else {
+                printf("DEBUG: Function symbol inserted successfully\n");
+            }
+        }
+    }
+
+skip_symtab:
     parser_consume(parser, OPEN_PAREN, "Expected '(' after function name\n");
+    
+    // Enter function scope for parameters
+    if (parser->symtab != NULL) {
+        printf("DEBUG: Entering function scope\n");
+        symtab_enter_scope(parser->symtab);
+        if (parser->symtab->current_scope) {
+            parser->symtab->current_scope->flags |= FUNCTION;
+        }
+    }
     
     if (!parser_check(parser, CLOSE_PAREN)) 
     {
         do {
             ASTNode* param = parse_param(parser);
-            params = parser_grow_array(params, &params_count, param);
+            if (param) {
+                params = parser_grow_array(params, &params_count, param);
+            }
         } while (parser_match(parser, COMMA));
     }
     parser_consume(parser, CLOSE_PAREN, "Expected ')' after parameters\n");
@@ -142,12 +262,19 @@ ASTNode* parse_func_decl(Parser* parser)
         return_type = parser_advance(parser);
     }
 
-    // parser block
+    // parse block
     if (parser_check(parser, OPEN_CURLY))
     {
         block = parse_block(parser);
     }
     
+    // Exit function scope
+    if (parser->symtab != NULL) {
+        printf("DEBUG: Exiting function scope\n");
+        symtab_exit_scope(parser->symtab);
+    }
+    
+    printf("DEBUG: Exiting parse_func_decl\n");
     return ast_fn_decl(identifier, params, params_count, return_type, block);
 }
 

@@ -1,0 +1,13 @@
+var x = 10
+var y = 20
+let PI = 3.14159
+
+fn add(a: int, b: int) -> int {
+    var result = a + b
+    return result
+}
+
+fn main() {
+    var sum = add(x, y)
+    return sum
+}

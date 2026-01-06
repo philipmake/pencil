@@ -1,0 +1,54 @@
+var message = "Hello World"
+var count = 0
+let BUFFER_SIZE = 256
+
+fn greet(name: str, age: int) {
+    var greeting = "Hello"
+    var user_age = age
+    
+    if age >= 18 {
+        var adult_msg = "You are an adult"
+    } else {
+        var minor_msg = "You are a minor"
+    }
+}
+
+fn process_data(value: int) -> int {
+    var result = value
+    
+    match value {
+        0 => result = 0
+        1 => result = 1
+        2 => result = 4
+        3 => result = 9
+        _ => result = value * value
+    }
+    
+    return result
+}
+
+fn nested_scopes() {
+    var outer = 10
+    
+    if outer > 5 {
+        var inner1 = 20
+        
+        loop i: 0...3 {
+            var inner2 = 30
+            var sum = outer + inner1 + inner2
+        }
+    }
+}
+
+fn main() {
+    var name = "Alice"
+    var age = 25
+    
+    greet(name, age)
+    
+    var processed = process_data(5)
+    
+    nested_scopes()
+    
+    return processed
+}

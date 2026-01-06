@@ -1,5 +1,7 @@
 #include "ast.h"
 #include "parser.h"
+#include "scope.h"
+#include "symtab.h"
 #include "token.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,22 +13,34 @@
 // resets the current index to 0, and clears error messages.
 Parser* init_parser(Token** tokens, int count)
 {
-    Parser* parser =  (Parser *)malloc(sizeof(Parser));
-    parser->tokens = tokens;
-    parser->current = 0;
-    parser->count = count;
-    parser->error_msg = "";
-
-    printf("\nParser initialized....\n");
-    printf("Parser got %d tokens.\n", parser->count);
-
-    // Debug: print tokens to ensure they're valid
-    for (int i = 0; i < parser->count; i++) {
-        if (parser->tokens[i])
-            printf("Token[%d]: %s\n", i, parser->tokens[i]->lexeme);
+    printf("DEBUG: Initializing parser\n");
+    
+    Parser* p = malloc(sizeof(Parser));
+    if (!p) 
+    {
+        fprintf(stderr, "ERROR: Failed to allocate parser\n");
+        return NULL;
     }
-
-    return parser;
+    
+    p->tokens = tokens;
+    p->current = 0;
+    p->count = count;
+    p->error_msg = NULL;
+    
+    printf("DEBUG: Creating symbol table\n");
+    p->symtab = symtab_create();
+    
+    if (!p->symtab) 
+    {
+        fprintf(stderr, "ERROR: Failed to create symbol table\n");
+        free(p);
+        return NULL;
+    }
+    
+    printf("DEBUG: Parser initialized successfully\n");
+    printf("DEBUG: Initial scope depth: %d\n", p->symtab->current_depth);
+    
+    return p;
 }
 
 // Return the current token without advancing.
@@ -102,7 +116,8 @@ void report_error(SourceLocation loc, const char* msg)
 ASTNode* parse_program(Parser* parser)
 {
     ASTNode* root = ast_program();
-
+    scope_t* global_scope = create_global_scope();
+    
     while (!parser_is_at_end(parser))
     {
         ASTNode* stmt = parse_stmt(parser);   

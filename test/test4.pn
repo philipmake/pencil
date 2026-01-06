@@ -1,0 +1,31 @@
+struct Point {
+    x: int
+    y: int
+}
+
+struct Person {
+    name: str
+    age: int
+    height: f32
+}
+
+enum Color {
+    Red,
+    Green,
+    Blue,
+    Yellow
+}
+
+fn create_person() {
+    var person_age = 25
+    var person_name = "Alice"
+    var person_height = 5.6
+}
+
+fn main() {
+    var p1_x = 10
+    var p1_y = 20
+    var favorite_color = 0
+    
+    create_person()
+}

@@ -1,0 +1,18 @@
+var numbers[int: 0...5] = [1, 2, 3, 4, 5]
+let max_size = 100
+
+fn sum_array() -> int {
+    var total = 0
+    var i = 0
+    
+    loop i: 0...5 {
+        total = total + numbers[i]
+    }
+    
+    return total
+}
+
+fn main() {
+    var result = sum_array()
+    return result
+}

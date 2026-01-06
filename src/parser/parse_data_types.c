@@ -1,5 +1,8 @@
 #include "ast.h"
+#include "scope.h"
+#include "symtab.h"
 #include "parser.h"
+
 // implement data structures like structs, enums, variants, and vec! and list
 // parser for parameters, enums, structs, variant, vec, List
 
@@ -7,12 +10,10 @@ ASTNode* parse_field(Parser* parser)
 {
     ASTNode* ident = parse_primary_expr(parser);
 
-    printf("filed\n");
     parser_consume(parser, COLON, "Expected ':' after parameter name.\n");
 
     Token* type = parser_advance(parser);
 
-printf("filed222\n");
     return ast_field(ident, type);
 }
 

@@ -23,7 +23,8 @@ struct scope_t {
 // Scope management
 scope_t* create_global_scope();
 
-typedef struct symtab_t symtab_t;
+typedef struct symtab_t symtab_t;  // forward declaration
+
 void symtab_enter_scope(symtab_t* table);
 void symtab_exit_scope(symtab_t* table);
 scope_t* scope_create(int level, scope_t* parent);

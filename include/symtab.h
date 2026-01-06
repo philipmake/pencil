@@ -78,13 +78,15 @@ typedef struct sym_entry_t sym_entry_t;
 typedef struct scope_t scope_t;
 
 // Reference structure - tracks where a symbol is used
-struct reference_t {
+struct reference_t 
+{
     int line;
     int is_write;           // 1 if this is a write/assignment, 0 if read
 };
 
 // Symbol entry structure
-struct sym_entry_t {
+struct sym_entry_t 
+{
     char name[MAX_NAME_LEN];
     symbol_t symbol_type;
     datatype_t type;
@@ -108,7 +110,8 @@ struct sym_entry_t {
 
 
 // Symbol table structure
-struct symtab_t{
+struct symtab_t
+{
     scope_t* scopes[MAX_DEPTH]; // stack of scopes
     int current_depth;
     scope_t* current_scope;
