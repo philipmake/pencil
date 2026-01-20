@@ -13,6 +13,7 @@ fn evaluate_grade(score: int) -> int {
     }
 }
 
+/*
 fn get_letter(level: int) {
     match level {
         1 => return "A"
@@ -21,7 +22,7 @@ fn get_letter(level: int) {
         _ => return "F"
     }
 }
-
+*/
 fn main() {
     var level = evaluate_grade(grade)
     return level

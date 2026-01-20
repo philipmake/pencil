@@ -455,6 +455,22 @@ void symtab_print_scope(scope_t* scope)
     }
 }
 
+void symtab_print_scope_r(scope_t* scope)
+{
+    if (!scope) return;
+
+    symtab_print_scope(scope);
+
+    for(int i = 0; i < scope->children_cnt; i++)
+    {
+        if (scope->children[i])
+        {
+            symtab_print_scope_r(scope->children[i]);
+        }
+    }
+}
+
+
 void symtab_print(symtab_t* table)
 {
     if (!table) {
@@ -469,11 +485,7 @@ void symtab_print(symtab_t* table)
     printf("Current Depth: %d\n", table->current_depth);
     
     // Print all scopes from global to current
-    for (int i = 0; i <= table->current_depth; i++) {
-        if (table->scopes[i]) {
-            symtab_print_scope(table->scopes[i]);
-        }
-    }
+    symtab_print_scope_r(table->global_scope);
     
     printf("\n");
     printf("================================================================================\n");

@@ -60,6 +60,7 @@ ASTNode* parse_block(Parser* parser)
     printf("DEBUG: Exiting parse_block\n");
     return ast_block(stmts, stmt_count);
 }
+
 ASTNode* parse_return_stmt(Parser* parser)
 {
     parser_advance(parser); // consume return keyword

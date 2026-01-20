@@ -16,6 +16,8 @@ struct scope_t {
     sym_entry_t** symbols;  // hash table or array of symbols
     int symbol_count;       // number of symbols in this scope
     scope_t* parent;        // pointer to enclosing scope
+    scope_t** children;
+    int children_cnt;
     int flags;              // check if scope is in a function or a loop
 };
 

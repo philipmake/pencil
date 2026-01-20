@@ -172,6 +172,41 @@ ASTNode* parse_param(Parser* parser)
     parser_consume(parser, COLON, "Expected ':' after parameter name.\n");
 
     Token* type = parser_advance(parser);
+
+    // SYMBOL TABLE CHECK
+    if (parser->symtab == NULL) {
+        printf("DEBUG: ERROR - parser->symtab is NULL in parse_func_decl!\n");
+        return NULL;
+    }
+
+    // Check for redeclaration
+    if (symtab_lookup_current_scope(parser->symtab, ident_tk->lexeme)) {
+        fprintf(stderr, "Error: Function '%s' already declared\n", ident_tk->lexeme);
+        // Continue parsing anyway
+    } else {
+        printf("DEBUG: Creating function symbol for '%s'\n", ident_tk->lexeme);
+        
+        // Create function symbol
+        sym_entry_t* param_sym = sym_create(
+            ident_tk->lexeme,
+            SYM_PARAM,
+            TYPE_VOID,
+            ident->location.line
+        );
+        
+        if (!param_sym) {
+            printf("DEBUG: ERROR - Failed to create function symbol\n");
+        } else {
+            param_sym->info.param.position = 0;
+            param_sym->info.param.offset = 0;
+            
+            if (symtab_insert(parser->symtab, param_sym) == NULL) {
+                printf("DEBUG: ERROR - Failed to insert function symbol\n");
+            } else {
+                printf("DEBUG: Function symbol inserted successfully\n");
+            }
+        }
+    }
     return ast_param(ident, type);
 }
 

@@ -19,7 +19,9 @@ scope_t* scope_create(int level, scope_t* parent)
     scope->symbol_count = 0;
     scope->parent = parent;
     scope->flags = 0;
-    
+    scope->children = NULL;
+    scope->children_cnt = 0;
+
     // Inherit certain flags from parent
     if (parent) {
         if (parent->flags & FUNCTION) {
@@ -47,6 +49,15 @@ void symtab_enter_scope(symtab_t* table)
     int new_depth = table->current_depth + 1;
     scope_t* new_scope = scope_create(new_depth, table->current_scope);
 
+    if (table->current_scope != NULL)
+    {
+        scope_t* parent = table->current_scope;
+        parent->children = realloc(parent->children, 
+                                   sizeof(scope_t*) * (parent->children_cnt + 1));
+        parent->children[parent->children_cnt] = new_scope;
+        parent->children_cnt++;
+    }
+
     table->scopes[new_depth] = new_scope;
     table->current_scope = new_scope;
     table->current_depth = new_depth;
@@ -73,6 +84,11 @@ void scope_destroy(scope_t* scope)
     {
         sym_entry_t* sym = scope->symbols[i];
         sym_destroy(sym);
+    }
+
+    if (scope->children) 
+    {
+        free(scope->children);
     }
 
     free(scope->symbols);
